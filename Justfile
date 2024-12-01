@@ -6,3 +6,10 @@ generate day:
 
 run day:
     cargo run --release -- day$(printf "%02d" {{day}})
+
+
+download-ruff:
+    curl -LsSf https://astral.sh/ruff/install.sh | sh
+
+format:
+    ruff format days/*.py

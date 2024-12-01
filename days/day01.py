@@ -1,12 +1,7 @@
-data = load_data("day01")
-
-lefts = []
-rights = []
-
-def get_insert_position(item, list, starting_point):
+def get_insert_position(item: int, list: list[int], starting_point: int):
     if len(list) == 0:
         return 0
-    
+
     if len(list) == 1:
         if item >= list[0]:
             return starting_point + 1
@@ -19,32 +14,8 @@ def get_insert_position(item, list, starting_point):
     else:
         return get_insert_position(item, list[:pivot], starting_point)
 
-for line in data.splitlines():
-    [left, right] = [int(x) for x in line.split("   ")]
-    insert_position = get_insert_position(right, rights, 0)
-    rights.insert(insert_position, right)
 
-    insert_position = get_insert_position(left, lefts, 0)
-    lefts.insert(insert_position, left)
-
-# start part 1:
-
-result = 0
-
-for (a, b) in zip(lefts, rights):
-    if b <= a:
-        result += (a - b)
-    else:
-        result += (b - a)
-
-check(result, 3508942)
-# check(result, 11)
-
-# end part 1
-
-# start part 2:
-
-def make_counter(list):
+def make_counter(list: list[int]) -> dict[int, int]:
     counter = {}
     for item in list:
         if item not in counter:
@@ -52,14 +23,50 @@ def make_counter(list):
         counter[item] += 1
     return counter
 
+
+def add_to_list_ordered(item: int, list: list[int]):
+    insert_position = get_insert_position(item, list, 0)
+    list.insert(insert_position, item)
+    return list
+
+
+data = load_data("day01")
+
+lefts = []
+rights = []
+
+for line in data.splitlines():
+    [left, right] = [int(x) for x in line.split("   ")]
+    add_to_list_ordered(right, rights)
+    add_to_list_ordered(left, lefts)
+
+# part 1:
+
+result = sum([abs(b - a) for a, b in zip(lefts, rights)])
+
+check(result, 3508942)
+# check(result, 11)
+
+# part 2:
+
 left_counter = make_counter(lefts)
 right_counter = make_counter(rights)
 
-score = 0
+## classic loop
+# score = 0
 
-for key, value in left_counter.items():
-    if key in right_counter:
-        score += key * value * right_counter[key]
+# for key, value in left_counter.items():
+#     if key in right_counter:
+#         score += key * value * right_counter[key]
+
+## list comprehension
+score = sum(
+    [
+        key * value * right_counter[key]
+        for key, value in left_counter.items()
+        if key in right_counter
+    ]
+)
 
 # check(score, 31)
 check(score, 26593248)

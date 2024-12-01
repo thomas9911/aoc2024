@@ -1,14 +1,10 @@
-use std::{io::Read, path::PathBuf};
-
-use starlark::environment::Module;
+use starlark::{environment::Module, values::Heap};
 use starlark::eval::Evaluator;
 use starlark::syntax::AstModule;
 use starlark::syntax::Dialect;
 use starlark::values::Value;
-use starlark::{
-    environment::{Globals, GlobalsBuilder},
-    starlark_module,
-};
+use starlark::{environment::GlobalsBuilder, starlark_module};
+use std::path::PathBuf;
 
 #[starlark_module]
 fn aoc_module(builder: &mut GlobalsBuilder) {
@@ -27,13 +23,24 @@ fn aoc_module(builder: &mut GlobalsBuilder) {
         Ok(contents)
     }
 
+    fn sum<'v>(data: Value<'v>, heap: &'v Heap) -> anyhow::Result<Value<'v>> {
+        let iter = data.iterate(heap).map_err(|e| e.into_anyhow())?;
+        let mut result = heap.alloc(0);
+        for item in iter {
+            result = result.add(item, heap).map_err(|e| e.into_anyhow())?;
+        }
+        Ok(result)
+    }
+
     fn check<'v>(left: Value<'v>, right: Value<'v>) -> anyhow::Result<u32> {
         if left != right {
-            anyhow::bail!(format!("left is not equal to right
+            anyhow::bail!(format!(
+                "left is not equal to right
 Left:
     {left}
 Right:
-    {right}"))
+    {right}"
+            ))
         }
 
         Ok(0)

@@ -70,5 +70,3 @@ score = sum(
 
 # check(score, 31)
 check(score, 26593248)
-
-# end part 2

@@ -1,9 +1,8 @@
-use starlark::{environment::Module, values::Heap};
+use starlark::environment::{GlobalsBuilder, Module};
 use starlark::eval::Evaluator;
-use starlark::syntax::AstModule;
-use starlark::syntax::Dialect;
-use starlark::values::Value;
-use starlark::{environment::GlobalsBuilder, starlark_module};
+use starlark::starlark_module;
+use starlark::syntax::{AstModule, Dialect};
+use starlark::values::{Heap, Value};
 use std::path::PathBuf;
 
 #[starlark_module]

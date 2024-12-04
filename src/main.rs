@@ -4,11 +4,27 @@ use starlark::starlark_module;
 use starlark::syntax::{AstModule, Dialect};
 use starlark::values::{Heap, Value};
 use std::path::PathBuf;
+use std::io::Write;
 
 #[starlark_module]
 fn aoc_module(builder: &mut GlobalsBuilder) {
-    fn print<'v>(data: Value<'v>) -> anyhow::Result<u32> {
-        println!("{}", data);
+    fn print<'v>(#[starlark(args)] items: Value<'v>, heap: &'v Heap) -> anyhow::Result<u32> {
+        let iter = items.iterate(heap).map_err(|e| e.into_anyhow())?;
+
+        let mut buffer = Vec::new();
+        for data in iter {
+            if let Some(s) = data.unpack_str() {
+                write!(buffer, "{}", s)?;
+            } else {
+                write!(buffer, "{}", data)?;
+            }
+            buffer.push(b',');
+        }
+        buffer.pop();
+        if buffer.len() != 0 {
+            println!("{}", std::str::from_utf8(&buffer)?)
+        }
+
         Ok(0)
     }
 

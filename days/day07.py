@@ -1,6 +1,29 @@
 data = load_data("day07")
 
 
+def log_10_at_home(a):
+    # calculates the number of times a number can be divided by 10
+    rounds = 0
+    for _ in range(100):
+        if a > 9:
+            a /= 10
+            rounds += 1
+        elif a < 1:
+            rounds -= 1
+            break
+        else:
+            break
+    return rounds
+
+
+def power10(a, b):
+    # calculates a * 10 ** b
+    base = 1
+    for i in range(b):
+        base *= 10
+    return a * base
+
+
 def add(a, b):
     return a + b
 
@@ -12,7 +35,7 @@ def multiply(a, b):
 def concat(a, b):
     if a == None:
         return b
-    return int(str(a) + str(b))
+    return power10(a, log_10_at_home(b) + 1) + b
 
 
 def tryout_part1(items, current_score, current_function, score_to_match):

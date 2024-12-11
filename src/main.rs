@@ -77,6 +77,7 @@ fn run_starlark(filename: &str, content: &str) -> anyhow::Result<serde_json::Val
 
     // We create an evaluator, which controls how evaluation occurs.
     let mut eval: Evaluator = Evaluator::new(&module);
+    // eval.set_max_callstack_size(16* 1024).unwrap();
 
     // And finally we evaluate the code using the evaluator.
     let res: Value = eval

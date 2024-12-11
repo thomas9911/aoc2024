@@ -1,7 +1,4 @@
 use anyhow::Result;
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
 
 pub type Layout = Vec<Option<u32>>;
 

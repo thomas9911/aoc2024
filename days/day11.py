@@ -6,11 +6,15 @@ def trim_zeros(stone):
 
 
 STONE_CACHE = {"0": ["1"]}
+CACHE_STAT = {"hit": 0, "mis": 0}
 
 
 def apply_per_stone(stone):
     if stone in STONE_CACHE:
+        CACHE_STAT["hit"] += 1
         return STONE_CACHE[stone]
+    else:
+        CACHE_STAT["mis"] += 1
 
     if len(stone) % 2 == 0:
         midpoint = len(stone) // 2
@@ -27,19 +31,15 @@ def apply_per_stone(stone):
 def apply_rounds(stones, rounds):
     stones_lookup = {}
     for stone in stones:
-        if stone not in stones_lookup:
-            stones_lookup[stone] = 1
-        else:
-            stones_lookup[stone] += 1
+        stones_lookup[stone] = stones_lookup.setdefault(stone, 0) + 1
 
     for _ in range(rounds):
         next_lookup = {}
         for stone in stones_lookup:
             for next_stone in apply_per_stone(stone):
-                if next_stone not in next_lookup:
-                    next_lookup[next_stone] = stones_lookup[stone]
-                else:
-                    next_lookup[next_stone] += stones_lookup[stone]
+                next_lookup[next_stone] = (
+                    next_lookup.setdefault(next_stone, 0) + stones_lookup[stone]
+                )
         stones_lookup = next_lookup
 
     score = 0
@@ -56,3 +56,8 @@ check(part1, 188902)
 
 part2 = apply_rounds(stones, 75)
 check(part2, 223894720281135)
+
+stat = (
+    int((CACHE_STAT["hit"] / (CACHE_STAT["hit"] + CACHE_STAT["mis"])) * 10000)
+) / 100
+print(f"cache hit ration: {stat}%")
